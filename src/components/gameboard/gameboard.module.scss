@@ -1,0 +1,12 @@
+@import '../../sass/';
+
+.BoardContainer {
+	width: $cell-size * 9 + ($border-size * 6);
+	height: $cell-size * 9 + ($border-size * 6);
+	display: flex;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+	position: relative;
+
+	z-index: 5;
+}

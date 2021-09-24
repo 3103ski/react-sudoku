@@ -1,25 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useContext } from 'react';
+import { GameContext } from './context/game.js';
+import * as style from './app.module.scss';
+import { Gameboard } from './components';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+	const game = useContext(GameContext);
+
+	function ClearFocusCell() {
+		return (
+			<div
+				onClick={() => game.setFocusCell(null)}
+				id='bg-clear'
+				className={style.ClearBG}></div>
+		);
+	}
+	return (
+		<>
+			<div className={style.AppContainer}>
+				<Gameboard />
+			</div>
+			<ClearFocusCell />
+		</>
+	);
 }
-
-export default App;

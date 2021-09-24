@@ -1,0 +1,27 @@
+@import '../../sass/';
+
+.CellContainer {
+	width: $cell-size;
+	height: $cell-size;
+	margin: 0;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: $border-size solid $thin-color;
+	z-index: inherit;
+
+	p {
+		padding: 0;
+		margin: 0;
+	}
+
+	input {
+		width: $cell-size * 0.5;
+		text-align: center;
+	}
+
+	&:hover {
+		cursor: pointer;
+	}
+}

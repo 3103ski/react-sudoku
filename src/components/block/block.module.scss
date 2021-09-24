@@ -1,0 +1,12 @@
+@import '../../sass/';
+
+.BlockContainer {
+	width: $cell-size * 3;
+	height: $cell-size * 3;
+
+	display: flex;
+	flex-wrap: wrap;
+
+	border: $border-size solid $thick-color;
+	z-index: inherit;
+}
