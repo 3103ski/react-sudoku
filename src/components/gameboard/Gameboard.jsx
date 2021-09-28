@@ -22,5 +22,9 @@ export default function Gameboard() {
 		return blocks.map((block, i) => <Block key={`block=${i}`} cells={block}></Block>);
 	};
 
-	return <div className={style.BoardContainer}>{renderBlocks()}</div>;
+	return (
+		<>
+			<div className={style.BoardContainer}>{renderBlocks()}</div>
+		</>
+	);
 }

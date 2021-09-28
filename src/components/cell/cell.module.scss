@@ -10,6 +10,7 @@
 	justify-content: center;
 	border: $border-size solid $thin-color;
 	z-index: inherit;
+	transition: 0.2s;
 
 	p {
 		padding: 0;
@@ -22,10 +23,21 @@
 	}
 
 	&[data-is-clue='1'] {
-		background-color: lightblue;
+		background-color: $clue;
 	}
 
 	&[data-is-clue='0']:hover {
 		cursor: pointer;
+	}
+
+	&[data-is-clue='0'] {
+		&[data-show-correct='1'] {
+			&[data-is-correct='1'] {
+				background-color: $correct;
+			}
+			&[data-is-correct='0'] {
+				background-color: $incorrect;
+			}
+		}
 	}
 }

@@ -22,7 +22,7 @@ export default function Cell({ cell }) {
 		if (cellValue !== userInput) {
 			let updatedCell = {
 				...cell,
-				answer: userInput,
+				answer: parseInt(userInput),
 			};
 			setCellValue(userInput);
 			game.updateCellValue(updatedCell);
@@ -71,6 +71,8 @@ export default function Cell({ cell }) {
 		<div
 			onClick={handleCellClick}
 			className={style.CellContainer}
+			data-show-correct={game.checkAnswers ? 1 : 0}
+			data-is-correct={cell.answer === cell.correctAnswer ? 1 : 0}
 			data-is-clue={isClue ? 1 : 0}>
 			{isEditing ? (
 				<input
