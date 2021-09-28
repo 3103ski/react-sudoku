@@ -1,7 +1,4 @@
 /* eslint-disable no-array-constructor */
-// var sudoku = new Array(81).fill(0);
-
-// solve(sudoku);
 
 // given a sudoku cell, returns the row
 export function returnRow(cell) {
@@ -166,7 +163,7 @@ export function nextRandom(possible) {
 	return minChoices;
 }
 
-// given a sudoku, solves it
+// given a sudoku, solve it
 export function generateSudoku() {
 	var sudoku = new Array(81).fill(0);
 	var saved = new Array();
@@ -192,5 +189,3 @@ export function generateSudoku() {
 	}
 	return sudoku;
 }
-
-// export { sudoku, generateSudoku };

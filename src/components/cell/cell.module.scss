@@ -21,7 +21,11 @@
 		text-align: center;
 	}
 
-	&:hover {
+	&[data-is-clue='1'] {
+		background-color: lightblue;
+	}
+
+	&[data-is-clue='0']:hover {
 		cursor: pointer;
 	}
 }

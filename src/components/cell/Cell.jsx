@@ -10,6 +10,14 @@ export default function Cell({ cell }) {
 	const [cellValue, setCellValue] = useState(cell.answer);
 	const [userInput, setUserInput] = useState('');
 
+	// Validate and handle user input before setting value of cell
+	const handleInputOnChange = (e) => {
+		if ((!isNaN(e.target.value) && userInput.length < 1) || e.target.value === '') {
+			setUserInput(e.target.value);
+		}
+	};
+
+	// If user input doesn't match stored value set the new value
 	const handleAddUserInput = useCallback(() => {
 		if (cellValue !== userInput) {
 			let updatedCell = {
@@ -21,26 +29,25 @@ export default function Cell({ cell }) {
 		}
 	}, [cell, cellValue, game, userInput]);
 
-	const handleInputOnChange = (e) => {
-		if ((!isNaN(e.target.value) && userInput.length < 1) || e.target.value === '') {
-			setUserInput(e.target.value);
-		}
-	};
+	// Handle enter key when cell is active input
+	const handleOnEnterKey = (e) => (e.key === 'Enter' ? game.setFocusCell(null) : null);
 
-	const handleCellClick = () => {
-		if (!isClue) {
-			game.setFocusCell(cell.cellIndex);
-		} else {
-			game.setFocusCell(null);
-		}
-	};
+	// Let game context know if a cell should be focused when clicked
+	const handleCellClick = () =>
+		!isClue ? game.setFocusCell(cell.cellIndex) : game.setFocusCell(null);
 
+	//••••••••
+	// SideEffects
+	//••••••••
+
+	// •• Check if cell should show the answer without user input
 	useEffect(() => {
 		if (isClue || game.showAnswers) {
 			setCellValue(cell.correctAnswer);
 		}
 	}, [game.clues, cell.correctAnswer, cell.cellIndex, game.showAnswers, isClue]);
 
+	// •• Toggle input editing
 	useEffect(() => {
 		if (game.focusCell === cell.cellIndex) {
 			setIsEditing(true);
@@ -61,12 +68,15 @@ export default function Cell({ cell }) {
 	}, [isEditing]);
 
 	return (
-		<div className={style.CellContainer} onClick={handleCellClick}>
+		<div
+			onClick={handleCellClick}
+			className={style.CellContainer}
+			data-is-clue={isClue ? 1 : 0}>
 			{isEditing ? (
 				<input
 					type='text'
 					value={userInput}
-					onKeyDown={(e) => (e.key === 'Enter' ? game.setFocusCell(null) : null)}
+					onKeyDown={handleOnEnterKey}
 					onChange={handleInputOnChange}
 				/>
 			) : (

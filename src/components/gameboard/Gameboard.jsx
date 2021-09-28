@@ -5,22 +5,22 @@ import Block from '../block/Block.jsx';
 
 export default function Gameboard() {
 	const game = useContext(GameContext);
-	let blocks = [];
-	for (let i = 0; i <= 8; i++) {
-		let blockCells = [];
-		game.cells.map((cell) => {
-			if (cell.block === i) {
-				blockCells.push(cell);
-			}
-			return null;
-		});
-		blocks.push(blockCells);
-	}
-	return (
-		<div className={style.BoardContainer}>
-			{blocks.map((block, i) => (
-				<Block key={`block=${i}`} cells={block}></Block>
-			))}
-		</div>
-	);
+
+	const renderBlocks = () => {
+		let blocks = [];
+		for (let i = 0; i <= 8; i++) {
+			let blockCells = [];
+			game.cells.map((cell) => {
+				if (cell.block === i) {
+					blockCells.push(cell);
+				}
+				return null;
+			});
+			blocks.push(blockCells);
+		}
+
+		return blocks.map((block, i) => <Block key={`block=${i}`} cells={block}></Block>);
+	};
+
+	return <div className={style.BoardContainer}>{renderBlocks()}</div>;
 }
