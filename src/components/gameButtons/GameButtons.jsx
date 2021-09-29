@@ -8,7 +8,12 @@ export default function GameButtons(props) {
 
 	return (
 		<div className={style.GameButtonsContainer}>
-			<button onClick={game.checkPuzzle}>Check Puzzle</button>
+			<button onClick={game.checkPuzzle} className={style.CheckPuzzle}>
+				Check Puzzle
+			</button>
+			<button onClick={game.newPuzzle} className={style.NewPuzzle}>
+				Generate New Puzzle
+			</button>
 		</div>
 	);
 }

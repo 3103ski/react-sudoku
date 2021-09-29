@@ -4,27 +4,49 @@ import { generateSudoku, returnBlock, returnRow, returnCol } from '../util/sudok
 
 const initialState = {
 	puzzleAnswers: generateSudoku(),
-	cells: null,
 	difficulty: 'medium',
-	clues: buildClueArray(6),
+	cells: null,
+	clues: null,
 	focusCell: null,
-	showAnswers: false,
-	checkAnswers: false,
 	wrongAnswerCount: null,
+	showAnswers: false,
+	gameComplete: false,
 };
 
-initialState.cells = initialState.puzzleAnswers.map((cell, i) => ({
-	correctAnswer: cell,
-	row: returnRow(i),
-	col: returnCol(i),
-	block: returnBlock(i),
-	answer: null,
-	cellIndex: i,
-}));
+initialState.cells = generateCells(initialState.puzzleAnswers);
+initialState.clues = buildClueArray(initialState.difficulty);
 
-function buildClueArray(lengthDemand) {
+const GameContext = createContext(initialState);
+
+function generateCells(puzzleAnswers) {
+	return puzzleAnswers.map((cell, i) => ({
+		correctAnswer: cell,
+		row: returnRow(i),
+		col: returnCol(i),
+		block: returnBlock(i),
+		answer: null,
+		cellIndex: i,
+	}));
+}
+
+function buildClueArray(difficulty) {
 	let indexList = [];
-	while (indexList.length < lengthDemand) {
+	let limit;
+	switch (difficulty) {
+		case 'easy':
+			limit = 35;
+			break;
+		case 'hard':
+			limit = 15;
+			break;
+		case 'medium':
+			limit = 25;
+			break;
+		default:
+			limit = 25;
+			break;
+	}
+	while (indexList.length < limit) {
 		let num = Math.floor(Math.random() * 80);
 		if (!indexList.includes(num)) {
 			indexList.push(num);
@@ -33,12 +55,9 @@ function buildClueArray(lengthDemand) {
 	return indexList;
 }
 
-initialState.clues = buildClueArray(25);
-
-const GameContext = createContext(initialState);
-const gameReducer = (
+const reducer = (
 	state,
-	{ type, checkAnswers, wrongAnswerCount, difficulty, cells, focusCell }
+	{ type, clues, puzzleAnswers, wrongAnswerCount, difficulty, cells, focusCell }
 ) => {
 	switch (type) {
 		case 'UPDATE_CELL_VALUES':
@@ -46,19 +65,20 @@ const gameReducer = (
 		case 'SET_FOCUS_CELL':
 			return updateObj(state, { focusCell });
 		case 'CHECK_PUZZLE':
-			console.log('checking');
-			return updateObj(state, { checkAnswers, wrongAnswerCount });
+			return updateObj(state, { wrongAnswerCount });
 		case 'TOGGLE_SHOW__ANSWERS':
 			return updateObj(state, !state.showAnswers);
 		case 'SET_DIFFICULTY':
 			return updateObj(state, { difficulty });
+		case 'NEW_PUZZLE':
+			return updateObj(state, { clues, puzzleAnswers, cells });
 		default:
 			return state;
 	}
 };
 
 const GameProvider = (props) => {
-	const [state, dispatch] = useReducer(gameReducer, initialState);
+	const [state, dispatch] = useReducer(reducer, initialState);
 
 	const setDifficult = (difficulty) => {
 		return dispatch({ type: 'SET_DIFFICULTY', difficulty });
@@ -68,17 +88,20 @@ const GameProvider = (props) => {
 		return dispatch({ type: 'SET_FOCUS_CELL', focusCell });
 	};
 
+	const newPuzzle = () => {
+		let puzzleAnswers = generateSudoku();
+		let clues = buildClueArray(state.difficulty);
+		let cells = generateCells(puzzleAnswers);
+		return dispatch({ type: 'NEW_PUZZLE', clues, cells, puzzleAnswers });
+	};
+
 	const checkPuzzle = () => {
 		let wrongAnswerCount = state.cells
 			.filter((c) => !state.clues.includes(c.cellIndex))
 			.filter((cell) => cell.answer !== cell.correctAnswer).length;
-		dispatch({ type: 'CHECK_PUZZLE', checkAnswers: true, wrongAnswerCount });
+		dispatch({ type: 'CHECK_PUZZLE', wrongAnswerCount });
 		if (wrongAnswerCount > 0) {
-			setTimeout(
-				() =>
-					dispatch({ type: 'CHECK_PUZZLE', checkAnswers: false, wrongAnswerCount: null }),
-				2000
-			);
+			setTimeout(() => dispatch({ type: 'CHECK_PUZZLE', wrongAnswerCount: null }), 2000);
 		}
 	};
 
@@ -97,12 +120,13 @@ const GameProvider = (props) => {
 				clues: state.clues,
 				flaggedBoxes: state.flaggedBoxes,
 				focusCell: state.focusCell,
-				checkAnswers: state.checkAnswers,
 				wrongAnswerCount: state.wrongAnswerCount,
+				gameComplete: state.gameComplete,
 				setDifficult,
 				setFocusCell,
 				updateCellValue,
 				checkPuzzle,
+				newPuzzle,
 			}}
 			{...props}
 		/>
