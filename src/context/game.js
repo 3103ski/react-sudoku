@@ -9,14 +9,11 @@ const initialState = {
 	clues: null,
 	focusCell: null,
 	wrongAnswerCount: null,
-	showAnswers: false,
 	gameComplete: false,
 };
 
 initialState.cells = generateCells(initialState.puzzleAnswers);
 initialState.clues = buildClueArray(initialState.difficulty);
-
-const GameContext = createContext(initialState);
 
 function generateCells(puzzleAnswers) {
 	return puzzleAnswers.map((cell, i) => ({
@@ -66,32 +63,29 @@ const reducer = (
 			return updateObj(state, { focusCell });
 		case 'CHECK_PUZZLE':
 			return updateObj(state, { wrongAnswerCount });
-		case 'TOGGLE_SHOW__ANSWERS':
-			return updateObj(state, !state.showAnswers);
 		case 'SET_DIFFICULTY':
 			return updateObj(state, { difficulty });
+		case 'END_GAME':
+			return updateObj(state, { gameComplete: true, cells, focusCell: null });
 		case 'NEW_PUZZLE':
-			return updateObj(state, { clues, puzzleAnswers, cells });
+			return updateObj(state, { clues, puzzleAnswers, cells, gameComplete: false });
 		default:
 			return state;
 	}
 };
 
+const GameContext = createContext(initialState);
+
 const GameProvider = (props) => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const setDifficult = (difficulty) => {
-		return dispatch({ type: 'SET_DIFFICULTY', difficulty });
-	};
-
-	const setFocusCell = (focusCell) => {
-		return dispatch({ type: 'SET_FOCUS_CELL', focusCell });
-	};
-
+	const setDifficult = (difficulty) => dispatch({ type: 'SET_DIFFICULTY', difficulty });
+	const setFocusCell = (focusCell) => dispatch({ type: 'SET_FOCUS_CELL', focusCell });
 	const newPuzzle = () => {
 		let puzzleAnswers = generateSudoku();
 		let clues = buildClueArray(state.difficulty);
 		let cells = generateCells(puzzleAnswers);
+
 		return dispatch({ type: 'NEW_PUZZLE', clues, cells, puzzleAnswers });
 	};
 
@@ -99,17 +93,24 @@ const GameProvider = (props) => {
 		let wrongAnswerCount = state.cells
 			.filter((c) => !state.clues.includes(c.cellIndex))
 			.filter((cell) => cell.answer !== cell.correctAnswer).length;
+
 		dispatch({ type: 'CHECK_PUZZLE', wrongAnswerCount });
+
 		if (wrongAnswerCount > 0) {
 			setTimeout(() => dispatch({ type: 'CHECK_PUZZLE', wrongAnswerCount: null }), 2000);
 		}
 	};
 
-	const updateCellValue = (newCell) => {
-		const updatedCells = state.cells.map((cell) =>
+	const endGame = () => {
+		let cells = state.cells.map((cell) => ({ ...cell, answer: cell.correctAnswer }));
+		return dispatch({ type: 'END_GAME', cells });
+	};
+
+	const updateCellAnswer = (newCell) => {
+		let cells = state.cells.map((cell) =>
 			cell.cellIndex === newCell.cellIndex ? newCell : cell
 		);
-		return dispatch({ type: 'UPDATE_CELL_VALUES', cells: updatedCells });
+		return dispatch({ type: 'UPDATE_CELL_VALUES', cells });
 	};
 
 	return (
@@ -124,9 +125,10 @@ const GameProvider = (props) => {
 				gameComplete: state.gameComplete,
 				setDifficult,
 				setFocusCell,
-				updateCellValue,
+				updateCellAnswer,
 				checkPuzzle,
 				newPuzzle,
+				endGame,
 			}}
 			{...props}
 		/>

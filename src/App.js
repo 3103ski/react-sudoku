@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import * as style from './app.module.scss';
 
 import { GameContext } from './context/game.js';
-import { Gameboard, GameButtons } from './components';
+import { Gameboard, GameOptions } from './components';
 
 export default function App() {
 	const game = useContext(GameContext);
@@ -26,7 +26,7 @@ export default function App() {
 		<>
 			<RenderGameStatus />
 			<div className={style.AppContainer}>
-				<GameButtons />
+				<GameOptions />
 				<Gameboard />
 			</div>
 			<TransparentCancelFocusBackdrop />

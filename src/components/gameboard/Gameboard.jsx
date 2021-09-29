@@ -11,10 +11,9 @@ export default function Gameboard() {
 	const renderBlocks = () => {
 		let blocks = [];
 		for (let i = 0; i <= 8; i++) {
-			let blockCells = game.cells.filter((cell) => cell.block === i);
-			blocks.push(blockCells);
+			blocks.push(game.cells.filter((cell) => cell.block === i));
 		}
-		return blocks.map((block, i) => <Block key={`block=${i}`} cells={block} />);
+		return blocks.map((block, i) => <Block key={`block__${i}`} cells={block} />);
 	};
 
 	return <div className={style.BoardContainer}>{renderBlocks()}</div>;

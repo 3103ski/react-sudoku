@@ -27,7 +27,9 @@
 	}
 
 	&[data-is-clue='0']:hover {
-		cursor: pointer;
+		&[data-game-complete='0'] {
+			cursor: pointer;
+		}
 	}
 
 	&[data-is-clue='0'] {
