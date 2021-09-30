@@ -1,6 +1,8 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
-import * as style from './cell.module.scss';
+
 import { GameContext } from '../../context/game.js';
+
+import * as style from './cell.module.scss';
 
 export default function Cell({ cell }) {
 	const game = useContext(GameContext);
@@ -12,9 +14,8 @@ export default function Cell({ cell }) {
 
 	// •• Validate and handle user input before setting value of cell
 	const handleInputOnChange = (e) => {
-		if ((!isNaN(e.target.value) && userInput.length < 1) || e.target.value === '') {
+		if ((!isNaN(e.target.value) && userInput.length < 1) || e.target.value === '')
 			setUserInput(e.target.value);
-		}
 	};
 
 	// •• If user input doesn't match stored value set the new value
@@ -28,9 +29,7 @@ export default function Cell({ cell }) {
 		}
 	}, [cell, cellValue, game, userInput]);
 
-	const fillAnswer = useCallback(() => {
-		setCellValue(cell.correctAnswer);
-	}, [cell.correctAnswer]);
+	const fillAnswer = useCallback(() => setCellValue(cell.correctAnswer), [cell.correctAnswer]);
 
 	// •• Handle enter key when cell is active input
 	const handleOnEnterKey = (e) => (e.key === 'Enter' ? game.setFocusCell(null) : null);
@@ -45,28 +44,23 @@ export default function Cell({ cell }) {
 
 	// •• Check if cell should show the answer as a clue
 	useEffect(() => {
-		if (isClue) {
-			fillAnswer();
-		}
+		if (isClue) fillAnswer();
 	}, [fillAnswer, isClue]);
 
 	// •• Fill answer if the game has been ended
-	useEffect(() => {
-		if (game.gameComplete === true && cell.answer !== cellValue) {
-			fillAnswer();
-		}
-	}, [cell, cell.correctAnswer, cellValue, fillAnswer, game.gameComplete]);
+	useEffect(
+		() => (game.gameComplete === true && cell.answer !== cellValue ? fillAnswer() : null),
+		[cell, cell.correctAnswer, cellValue, fillAnswer, game.gameComplete]
+	);
 
-	// •• Toggle input editing
+	// •• Toggle input editing; set answer if new value is present
 	useEffect(() => {
 		if (!game.gameComplete) {
 			if (game.focusCell === cell.cellIndex) {
 				setIsEditing(true);
 			} else if (game.focusCell !== cell.cellIndex) {
 				setIsEditing(false);
-				if (cellValue !== userInput && !isClue) {
-					handleInputSubmit();
-				}
+				if (cellValue !== userInput && !isClue) handleInputSubmit();
 			}
 		}
 	}, [
@@ -82,9 +76,7 @@ export default function Cell({ cell }) {
 	// •• Focus On Input When Visible
 	useEffect(() => {
 		let input = document.querySelector('input');
-		if (isEditing && input) {
-			input.focus();
-		}
+		if (isEditing && input) input.focus();
 	}, [isEditing]);
 
 	return (

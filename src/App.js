@@ -8,7 +8,7 @@ import { Gameboard, GameOptions } from './components';
 export default function App() {
 	const game = useContext(GameContext);
 
-	// Cancles focus on a cell if the user clicks outside of the board
+	// Cancels focus on a cell if the user clicks outside of the board
 	function TransparentCancelFocusBackdrop() {
 		return <div onClick={() => game.setFocusCell(null)} className={style.ClearBG} />;
 	}

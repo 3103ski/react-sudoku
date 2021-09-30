@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
-import * as style from './gameOptions.module.scss';
 
 import { GameContext } from '../../context/game.js';
+
+import * as style from './gameOptions.module.scss';
 
 export default function GameOptions() {
 	const game = useContext(GameContext);
@@ -15,10 +16,8 @@ export default function GameOptions() {
 	);
 }
 
-GameOptions.Button = ({ text, cn, cb }) => {
-	return (
-		<button className={`${style.GameButton} ${cn}`} onClick={cb}>
-			{text}
-		</button>
-	);
-};
+GameOptions.Button = ({ text, cn, cb }) => (
+	<button className={`${style.GameButton} ${cn}`} onClick={cb}>
+		{text}
+	</button>
+);

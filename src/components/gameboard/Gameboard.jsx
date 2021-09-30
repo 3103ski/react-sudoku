@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 
-import * as style from './gameboard.module.scss';
-
 import { GameContext } from '../../context/game';
 import Block from '../block/Block.jsx';
+
+import * as style from './gameboard.module.scss';
 
 export default function Gameboard() {
 	const game = useContext(GameContext);
