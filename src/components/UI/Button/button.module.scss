@@ -1,0 +1,31 @@
+.Button {
+	padding: 10px 13px;
+	border-radius: 5px;
+	border: none;
+	color: white;
+	margin: 10px;
+	transition: 0.15s;
+	transition-timing-function: ease-in-out;
+
+	&.Green {
+		background-color: green;
+	}
+
+	&.Orange {
+		background-color: orange;
+	}
+
+	&.LightBlue {
+		background-color: lightblue;
+	}
+
+	&.Blue {
+		background-color: rgb(41, 60, 223);
+	}
+
+	&:hover {
+		cursor: pointer;
+		box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
+		transform: translate3d(-1px, -1px, 0);
+	}
+}

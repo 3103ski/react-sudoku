@@ -85,7 +85,9 @@ const GameProvider = (props) => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	// •• Game Options
-	const setDifficulty = (difficulty) => dispatch({ type: 'SET_DIFFICULTY', difficulty });
+	const setDifficulty = async (difficulty) => {
+		await dispatch({ type: 'SET_DIFFICULTY', difficulty });
+	};
 
 	//••••••••••••••••••
 	// •• Puzzle & Game
@@ -142,6 +144,7 @@ const GameProvider = (props) => {
 				puzzleAnswers: state.puzzleAnswers,
 				cells: state.cells,
 				clues: state.clues,
+				difficulty: state.difficulty,
 				flaggedBoxes: state.flaggedBoxes,
 				focusCell: state.focusCell,
 				wrongAnswerCount: state.wrongAnswerCount,

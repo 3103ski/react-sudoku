@@ -24,11 +24,11 @@ export default function App() {
 
 	return (
 		<>
-			<RenderGameStatus />
+			<GameOptions />
 			<div className={style.AppContainer}>
-				<GameOptions />
 				<Gameboard />
 			</div>
+			<RenderGameStatus />
 			<TransparentCancelFocusBackdrop />
 		</>
 	);

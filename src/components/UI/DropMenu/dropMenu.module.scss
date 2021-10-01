@@ -1,0 +1,46 @@
+.Container {
+	padding: 5px 20px;
+	border: solid 1px black;
+	z-index: 20;
+	position: relative;
+
+	p {
+		margin: 0;
+	}
+
+	&:hover {
+		cursor: pointer;
+	}
+
+	.Options {
+		position: absolute;
+		display: flex;
+		background-color: white;
+		border: none;
+		max-height: 0;
+		top: 0;
+		left: -1px;
+		width: 100%;
+		transition: 0.1s;
+		transition-timing-function: ease-out;
+		overflow: hidden;
+
+		.OptionsInner {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			width: 100%;
+
+			.Option {
+				padding: 5px;
+				width: 100%;
+				text-transform: capitalize;
+				transition: 0.15s;
+
+				&:hover {
+					background-color: grey;
+				}
+			}
+		}
+	}
+}
