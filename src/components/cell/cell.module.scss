@@ -5,6 +5,7 @@
 	height: $cell-size;
 	margin: 0;
 	box-sizing: border-box;
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -39,6 +40,31 @@
 			}
 			&[data-is-correct='0'] {
 				background-color: $incorrect;
+			}
+		}
+	}
+
+	.CellNotes {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+
+		.NoteBox {
+			width: 30%;
+			height: 30%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			p {
+				color: grey;
+				margin: 0;
 			}
 		}
 	}

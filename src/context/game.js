@@ -22,6 +22,7 @@ initialState.clues = buildClueArray(initialState.difficulty);
 function generateCells(puzzleAnswers) {
 	return puzzleAnswers.map((cell, i) => ({
 		correctAnswer: cell,
+		notes: [],
 		row: returnRow(i),
 		col: returnCol(i),
 		block: returnBlock(i),
@@ -35,13 +36,13 @@ function buildClueArray(difficulty) {
 
 	switch (difficulty) {
 		case 'easy':
-			limit = 35;
+			limit = 40;
 			break;
 		case 'hard':
-			limit = 15;
+			limit = 20;
 			break;
 		default:
-			limit = 25;
+			limit = 30;
 			break;
 	}
 
@@ -61,8 +62,8 @@ const reducer = (
 	{ type, clues, puzzleAnswers, wrongAnswerCount, difficulty, cells, focusCell }
 ) => {
 	switch (type) {
-		case 'UPDATE_CELL_VALUES':
-			return updateObj(state, { cells });
+		case 'UPDATE_CELL':
+			return updateObj(state, { cells, focusCell: null });
 		case 'SET_FOCUS_CELL':
 			return updateObj(state, { focusCell });
 		case 'CHECK_PUZZLE':
@@ -70,7 +71,13 @@ const reducer = (
 		case 'SET_DIFFICULTY':
 			return updateObj(state, { difficulty });
 		case 'NEW_PUZZLE':
-			return updateObj(state, { clues, puzzleAnswers, cells, gameComplete: false });
+			return updateObj(state, {
+				clues,
+				puzzleAnswers,
+				cells,
+				focusCell: null,
+				gameComplete: false,
+			});
 		case 'END_GAME':
 			return updateObj(state, { gameComplete: true, cells, focusCell: null });
 		default:
@@ -85,10 +92,7 @@ const GameProvider = (props) => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	// •• Game Options
-	const setDifficulty = async (difficulty) => {
-		await dispatch({ type: 'SET_DIFFICULTY', difficulty });
-	};
-
+	const setDifficulty = (difficulty) => dispatch({ type: 'SET_DIFFICULTY', difficulty });
 	//••••••••••••••••••
 	// •• Puzzle & Game
 	//••••••••••••••••••
@@ -97,7 +101,6 @@ const GameProvider = (props) => {
 	const newPuzzle = () => {
 		const puzzleAnswers = generateSudoku();
 		let [clues, cells] = [buildClueArray(state.difficulty), generateCells(puzzleAnswers)];
-
 		return dispatch({ type: 'NEW_PUZZLE', clues, cells, puzzleAnswers });
 	};
 
@@ -128,14 +131,13 @@ const GameProvider = (props) => {
 	const setFocusCell = (focusCell) => dispatch({ type: 'SET_FOCUS_CELL', focusCell });
 
 	// Recieve an updated cell from cell component and update stored cells in state
-	const updateCellAnswer = (newCell) =>
+	const updateCell = (newCell) =>
 		dispatch({
-			type: 'UPDATE_CELL_VALUES',
+			type: 'UPDATE_CELL',
 			cells: state.cells.map((cell) =>
 				cell.cellIndex === newCell.cellIndex ? newCell : cell
 			),
 		});
-
 	// TODO -
 
 	return (
@@ -151,7 +153,7 @@ const GameProvider = (props) => {
 				gameComplete: state.gameComplete,
 				setDifficulty,
 				setFocusCell,
-				updateCellAnswer,
+				updateCell,
 				checkPuzzle,
 				newPuzzle,
 				endGame,

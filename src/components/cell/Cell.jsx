@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useCallback } from 'react';
 
 import { GameContext } from '../../context/game.js';
+import { updateObj } from '../../util/util.js';
 
 import * as style from './cell.module.scss';
 
@@ -22,14 +23,28 @@ export default function Cell({ cell }) {
 	const handleInputSubmit = useCallback(() => {
 		if (cellValue !== userInput) {
 			setCellValue(userInput);
-			game.updateCellAnswer({
-				...cell,
-				answer: parseInt(userInput),
-			});
+			game.updateCell(updateObj(cell, { answer: parseInt(userInput) }));
 		}
 	}, [cell, cellValue, game, userInput]);
 
+	// •• Create function that fills cell answer
 	const fillAnswer = useCallback(() => setCellValue(cell.correctAnswer), [cell.correctAnswer]);
+
+	// •• Create a function that renders the notes assigned to the cell inside the block
+	const renderNotes = (notes) => {
+		const noteComponents = [];
+		for (let i = 1; i <= 9; i++) {
+			let note = (
+				<Note
+					key={`${cell.block}_${cell.row}_${cell.col}_cell-note_${i}`}
+					num={i}
+					cellIndex={cell.cellIndex}
+				/>
+			);
+			noteComponents.push(note);
+		}
+		return noteComponents.map((n) => n);
+	};
 
 	// •• Handle enter key when cell is active input
 	const handleOnEnterKey = (e) => (e.key === 'Enter' ? game.setFocusCell(null) : null);
@@ -48,10 +63,9 @@ export default function Cell({ cell }) {
 	}, [fillAnswer, isClue]);
 
 	// •• Fill answer if the game has been ended
-	useEffect(
-		() => (game.gameComplete === true && cell.answer !== cellValue ? fillAnswer() : null),
-		[cell, cell.correctAnswer, cellValue, fillAnswer, game.gameComplete]
-	);
+	useEffect(() => {
+		if (game.gameComplete === true && cell.answer !== cellValue) fillAnswer();
+	}, [cell, cell.correctAnswer, cellValue, fillAnswer, game.gameComplete]);
 
 	// •• Toggle input editing; set answer if new value is present
 	useEffect(() => {
@@ -60,17 +74,18 @@ export default function Cell({ cell }) {
 				setIsEditing(true);
 			} else if (game.focusCell !== cell.cellIndex) {
 				setIsEditing(false);
-				if (cellValue !== userInput && !isClue) handleInputSubmit();
+				if (cell.answer !== userInput && !isClue) handleInputSubmit();
 			}
 		}
 	}, [
 		cellValue,
 		isClue,
 		userInput,
+		handleInputSubmit,
 		game.focusCell,
 		game.gameComplete,
 		cell.cellIndex,
-		handleInputSubmit,
+		cell.answer,
 	]);
 
 	// •• Focus On Input When Visible
@@ -78,6 +93,8 @@ export default function Cell({ cell }) {
 		let input = document.querySelector('input');
 		if (isEditing && input) input.focus();
 	}, [isEditing]);
+
+	// •• Listen for updates to cell notes
 
 	return (
 		<div
@@ -95,8 +112,33 @@ export default function Cell({ cell }) {
 					onChange={handleInputOnChange}
 				/>
 			) : (
-				<p>{cellValue}</p>
+				<p>{isClue ? cell.correctAnswer : cell.answer ? cell.answer : null}</p>
 			)}
+			{!isClue && !isEditing && !cell.answer ? (
+				<div className={style.CellNotes}>
+					{renderNotes(game.cells[cell.cellIndex].notes)}
+				</div>
+			) : null}
+		</div>
+	);
+}
+
+function Note({ num, cellIndex }) {
+	const [isVisible, setIsVisible] = useState(false);
+	const game = useContext(GameContext);
+
+	useEffect(() => {
+		if (game.cells[cellIndex].notes.includes(num)) {
+			console.log(`${num} is inside of ${cellIndex} notes`);
+			setIsVisible(true);
+		} else {
+			console.log(`${num} is NOT inside of ${cellIndex} notes`);
+			setIsVisible(false);
+		}
+	}, [cellIndex, game.cells, num]);
+	return (
+		<div className={style.NoteBox}>
+			{num ? <p className={style.NoteNum}>{isVisible ? num : null}</p> : null}
 		</div>
 	);
 }
