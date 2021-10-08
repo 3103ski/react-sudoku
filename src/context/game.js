@@ -130,14 +130,27 @@ const GameProvider = (props) => {
 	// toggle or select focus cell's when clicking around the window or board
 	const setFocusCell = (focusCell) => dispatch({ type: 'SET_FOCUS_CELL', focusCell });
 
+	// update cell notes
+
 	// Recieve an updated cell from cell component and update stored cells in state
-	const updateCell = (newCell) =>
+	const updateCell = (newCell) => {
 		dispatch({
 			type: 'UPDATE_CELL',
-			cells: state.cells.map((cell) =>
-				cell.cellIndex === newCell.cellIndex ? newCell : cell
-			),
+			cells: state.cells.map((cell) => {
+				if (newCell.answer) {
+					if (
+						cell.row === newCell.row ||
+						cell.block === newCell.block ||
+						cell.col === newCell.col
+					)
+						cell.notes = cell.notes.filter((n) => n !== newCell.answer);
+
+					newCell.notes = [];
+				}
+				return cell.cellIndex === newCell.cellIndex ? newCell : cell;
+			}),
 		});
+	};
 	// TODO -
 
 	return (

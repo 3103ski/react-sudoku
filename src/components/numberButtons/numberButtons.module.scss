@@ -20,5 +20,9 @@
 		&:hover {
 			cursor: pointer;
 		}
+
+		&[data-fill='1'] {
+			background: grey;
+		}
 	}
 }

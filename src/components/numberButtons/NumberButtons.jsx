@@ -7,32 +7,35 @@ import * as style from './numberButtons.module.scss';
 
 export default function NumberButtons({ isNotes = false }) {
 	const game = useContext(GameContext);
+	let cell = game.cells[game.focusCell];
 
 	const handleButtonOnClick = (num) => {
-		let cell = game.cells[game.focusCell];
-		let updatedCell = game.cells[game.focusCell];
-
 		if (isNotes) {
-			let notes = cell.notes;
-
-			if (!notes.includes(num)) {
-				notes.push(num);
+			if (!cell.notes.includes(num)) {
+				cell.notes.push(num);
 			} else {
-				notes = notes.filter((n) => {
+				cell.notes = cell.notes.filter((n) => {
 					return n !== num;
 				});
 			}
-
-			updatedCell = updateObj(updatedCell, { notes });
-			return game.updateCell(updatedCell);
 		} else {
-			updatedCell = updateObj(updatedCell, { answer: num });
-			return game.updateCell(updatedCell);
+			if (cell.answer && num === cell.answer) {
+				cell = updateObj(cell, { answer: null });
+			} else {
+				cell = updateObj(cell, { answer: num });
+			}
 		}
+
+		return game.updateCell(cell);
 	};
 
 	const Btn = ({ num }) => (
-		<div onClick={() => handleButtonOnClick(num)} className={style.NumberButton}>
+		<div
+			onClick={() => handleButtonOnClick(num)}
+			data-fill={
+				(cell.notes.includes(num) && isNotes) || (cell.answer === num && !isNotes) ? 1 : 0
+			}
+			className={style.NumberButton}>
 			<span>{num}</span>
 		</div>
 	);

@@ -129,10 +129,8 @@ function Note({ num, cellIndex }) {
 
 	useEffect(() => {
 		if (game.cells[cellIndex].notes.includes(num)) {
-			console.log(`${num} is inside of ${cellIndex} notes`);
 			setIsVisible(true);
 		} else {
-			console.log(`${num} is NOT inside of ${cellIndex} notes`);
 			setIsVisible(false);
 		}
 	}, [cellIndex, game.cells, num]);
