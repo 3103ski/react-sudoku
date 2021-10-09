@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import * as style from './app.module.scss';
+import * as style from './app.module.css';
 
 import { GameContext } from './context/game.js';
 import { Gameboard, GameOptions } from './components';
